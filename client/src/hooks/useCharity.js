@@ -40,3 +40,5 @@ export function useMyCharity() {
     isUpdating: selectMutation.isPending
   };
 }
+
+export const useUserCharity = useMyCharity;

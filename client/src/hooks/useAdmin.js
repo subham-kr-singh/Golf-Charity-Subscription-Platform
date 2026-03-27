@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../api/admin.api';
+import apiClient from '../api/axios';
 
 export function useAdminUsers(params = {}) {
   return useQuery({
@@ -51,5 +52,55 @@ export function useAdminReports() {
       queryKey: ['admin', 'reports', 'charities'],
       queryFn: adminApi.getCharityStats
     })
+  };
+}
+
+// Generic dashboard admin hook for admin pages
+export function useAdmin(endpoint) {
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ['admin', endpoint],
+    queryFn: async () => {
+      // Basic endpoint parsing
+      const { data } = await apiClient.get(`/admin/${endpoint}`);
+      return data;
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (payload) => {
+      const url = payload.endpoint ? `/admin/${payload.endpoint}` : `/admin/${endpoint}`;
+      const dataPayload = payload.payload !== undefined ? payload.payload : payload;
+      const { data } = await apiClient.post(url, dataPayload);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, endpoint: overrideEndpoint, payload }) => {
+      const targetEndpoint = overrideEndpoint || endpoint;
+      // Depending on structure, try put or patch
+      const { data } = await apiClient.put(`/admin/${targetEndpoint}/${id}`, payload).catch(async () => {
+         // fallback if it was a patch
+         const res = await apiClient.patch(`/admin/${targetEndpoint}/${id}`, payload);
+         return res.data;
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+    },
+  });
+
+  return {
+    ...query,
+    createData: createMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    updateData: updateMutation.mutateAsync,
+    isUpdating: updateMutation.isPending,
   };
 }
