@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #080B14;
+    --color-surface: #0F1523;
+    --color-surface-2: #16213A;
+    --color-border: rgba(255, 255, 255, 0.07);
+    --color-accent: #00E5FF;
+    --color-accent-2: #7B5EA7;
+    --color-accent-3: #FFD166;
+    --color-success: #06D6A0;
+    --color-danger: #EF4444;
+    --color-text: #E8EAF0;
+    --color-muted: #6B7280;
+
+    --radius-card: 1.25rem;
+    --radius-btn: 0.75rem;
+    --radius-badge: 9999px;
+
+    --shadow-glow-cyan: 0 0 40px rgba(0, 229, 255, 0.15);
+    --shadow-glow-violet: 0 0 40px rgba(123, 94, 167, 0.20);
+    --shadow-glow-gold: 0 0 40px rgba(255, 209, 102, 0.18);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(15, 21, 35, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+  }
+}
