@@ -1,4 +1,6 @@
 require('dotenv').config();
+console.log('ENV CHECK: PORT=', process.env.PORT);
+console.log('ENV CHECK: SUPABASE_URL=', process.env.SUPABASE_URL);
 const express = require('express');
 const cors = require('cors');
 
@@ -23,8 +25,10 @@ const adminReportRoutes = require('./routes/admin/admin.report.routes');
 
 const app = express();
 
+const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : '*';
+
 app.use(cors({
-  origin: process.env.CLIENT_URL
+  origin: allowedOrigins
 }));
 
 // Webhook route needs raw body for Stripe signature verification
