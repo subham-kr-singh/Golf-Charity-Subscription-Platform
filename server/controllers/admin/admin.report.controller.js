@@ -19,7 +19,13 @@ const getOverview = async (req, res, next) => {
     
     const { data: carriedJackpot } = await prizePool.getCarriedJackpot();
 
-    const { data: charity_contribution_estimate, error: cErr } = await supabaseAdmin.from('v_charity_contributions').select('*');
+    let charity_contribution_estimate = null;
+    try {
+      const { data: cData } = await supabaseAdmin.from('v_charity_contributions').select('*');
+      charity_contribution_estimate = cData || null;
+    } catch (_e) {
+      // view may not exist yet — non-fatal
+    }
 
     res.status(200).json({
       data: {

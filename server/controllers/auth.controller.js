@@ -102,7 +102,9 @@ const refresh = async (req, res, next) => {
   try {
     const { refresh_token } = req.body;
     const { data, error } = await supabaseAnon.auth.refreshSession({ refresh_token });
-    if (error) throw error;
+    if (error || !data?.session) {
+      return res.status(401).json({ error: 'Invalid or expired refresh token' });
+    }
     res.status(200).json({ 
       data: {
         access_token: data.session.access_token, 
