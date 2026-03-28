@@ -90,7 +90,16 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    const { error } = await supabaseAnon.auth.signOut();
+    // Use the user's own token so we only sign out their specific session
+    // (not the server's shared anon client which would invalidate all sessions)
+    const token = req.headers.authorization?.split(' ')[1];
+    const { createClient } = require('@supabase/supabase-js');
+    const userClient = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_ANON_KEY,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+    const { error } = await userClient.auth.signOut({ scope: 'local' });
     if (error) throw error;
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
