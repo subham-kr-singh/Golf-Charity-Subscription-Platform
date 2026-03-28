@@ -37,7 +37,7 @@ const getOverview = async (req, res, next) => {
         total_prize_paid,
         total_winners_all_time,
         current_jackpot_pool: carriedJackpot || 0,
-        charity_contribution_estimate: cErr ? null : charity_contribution_estimate
+        charity_contribution_estimate,
       }
     });
   } catch (error) {
