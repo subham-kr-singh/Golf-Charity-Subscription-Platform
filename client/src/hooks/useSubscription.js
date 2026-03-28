@@ -11,9 +11,9 @@ export function useSubscription() {
 
   const checkoutMutation = useMutation({
     mutationFn: createCheckoutSession,
-    onSuccess: (data) => {
-      if (data?.data?.url) {
-        window.location.href = data.data.url;
+    onSuccess: (res) => {
+      if (res?.data?.checkout_url) {
+        window.location.href = res.data.checkout_url;
       }
     }
   });
@@ -27,9 +27,9 @@ export function useSubscription() {
 
   const portalMutation = useMutation({
     mutationFn: getBillingPortalUrl,
-    onSuccess: (data) => {
-      if (data?.data?.url) {
-        window.location.href = data.data.url;
+    onSuccess: (res) => {
+      if (res?.data?.portal_url) {
+        window.location.href = res.data.portal_url;
       }
     }
   });

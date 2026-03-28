@@ -6,8 +6,15 @@ import { Spinner } from '../../components/ui/Spinner';
 import { ShieldCheck } from 'lucide-react';
 
 export function SubscriptionPage() {
-  const { data: subRes, isLoading, createSession, isCreating, portalSession, isPortalLoading } = useSubscription();
-  const subscription = subRes?.data;
+  const { 
+    data: subscription, 
+    isLoading, 
+    checkout, 
+    isCheckingOut, 
+    goToPortal, 
+    isGoingToPortal 
+  } = useSubscription();
+
   const isActive = subscription?.status === 'active';
 
   if (isLoading) {
@@ -44,8 +51,8 @@ export function SubscriptionPage() {
 
       <SubscriptionStatus 
         subscription={subscription} 
-        onManage={() => portalSession()} 
-        isManaging={isPortalLoading} 
+        onManage={() => goToPortal()} 
+        isManaging={isGoingToPortal} 
       />
 
       {!isActive ? (
@@ -53,8 +60,8 @@ export function SubscriptionPage() {
           <PlanCard 
             plan={thePlan} 
             isPopular={true} 
-            onSubscribe={() => createSession()}
-            isLoading={isCreating}
+            onSubscribe={() => checkout({ plan: 'monthly' })}
+            isLoading={isCheckingOut}
             isCurrentPlan={false}
           />
         </div>
@@ -72,7 +79,7 @@ export function SubscriptionPage() {
               </p>
             </div>
             
-            <StripePortalButton onClick={() => portalSession()} isLoading={isPortalLoading} />
+            <StripePortalButton onClick={() => goToPortal()} isLoading={isGoingToPortal} />
           </div>
         </div>
       )}

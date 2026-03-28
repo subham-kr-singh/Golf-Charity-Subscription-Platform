@@ -128,8 +128,9 @@ const refresh = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+    const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',')[0] : 'http://localhost:5173';
     await supabaseAnon.auth.resetPasswordForEmail(email, { 
-      redirectTo: `${process.env.CLIENT_URL}/reset-password` 
+      redirectTo: `${clientUrl}/reset-password` 
     });
     res.status(200).json({ message: 'If that email exists, a reset link has been sent.' });
   } catch (error) {

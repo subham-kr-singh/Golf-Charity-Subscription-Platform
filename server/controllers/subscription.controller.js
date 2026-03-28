@@ -24,12 +24,14 @@ const checkout = async (req, res, next) => {
 
     const priceId = plan === 'monthly' ? process.env.STRIPE_PRICE_ID_MONTHLY : process.env.STRIPE_PRICE_ID_YEARLY;
 
+    const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',')[0] : 'http://localhost:5173';
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.CLIENT_URL}/dashboard?subscribed=true`,
-      cancel_url: `${process.env.CLIENT_URL}/subscribe?cancelled=true`,
+      success_url: `${clientUrl}/dashboard?subscribed=true`,
+      cancel_url: `${clientUrl}/dashboard/subscription?cancelled=true`,
       metadata: { user_id: req.user.id, plan }
     });
 
@@ -72,9 +74,11 @@ const portal = async (req, res, next) => {
       return res.status(400).json({ error: 'No Stripe customer found' });
     }
 
+    const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',')[0] : 'http://localhost:5173';
+
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripe_customer_id,
-      return_url: `${process.env.CLIENT_URL}/dashboard`
+      return_url: `${clientUrl}/dashboard/subscription`
     });
 
     res.status(200).json({ data: { portal_url: session.url } });

@@ -32,9 +32,12 @@ export function useAuth() {
     }
   });
 
+  const isAuthenticated = !!token;
+
   return {
     user: data?.data,
-    isLoading,
+    isAuthenticated,
+    isLoading: isLoading && !!token, // Only loading if we have a token and are fetching user
     isError,
     error,
     login: loginMutation.mutateAsync,
